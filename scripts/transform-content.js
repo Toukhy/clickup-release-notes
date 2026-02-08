@@ -1,7 +1,7 @@
 const fs = require('fs');
 
 const GROQ_API_KEY = process.env.GROQ_API_KEY;
-const GROQ_MODEL = 'llama-3.1-70b-versatile';
+const GROQ_MODEL = 'llama-3.3-70b-versatile';
 
 /**
  * Call Groq API to transform content
