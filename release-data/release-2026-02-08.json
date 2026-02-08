@@ -1,13 +1,12 @@
 {
-  "date": "8 of February 2026",
-  "release": "49",
-  "dateRange": "31 Jan, 26 to 8 Feb, 26",
-  "duration": "1 Week",
+  "date": "February 8, 2026",
+  "release": "R26.049-0208",
+  "dateRange": "January 31, 2026 to February 8, 2026",
   "newFeatures": [
     {
       "title": "[Due Date 5 Feb] HSA: Support Coupon Images for Standalone Manual Coupons",
-      "platform": "Web",
-      "plan": "All Plans",
+      "platform": "All",
+      "plan": "Shopify & Salla: Free / Pro / GURU · Selfserve: Starter / Growth / Enterprise",
       "channel": "All",
       "description": "<div><strong>As a</strong> client creating manual standalone coupons<br><strong>I want</strong> to upload an image when creating a coupon<br><strong>So that</strong> the coupon can be visually represented and retrieved with its image through the Coupons API.<br> </div><div><br> </div><div><p>Currently, standalone manual coupons do not support images. This enhancement will allow clients to <strong>attach an image when creating a manual coupon</strong>.<br>\nThe uploaded image will be <strong>stored and associated with the coupon</strong> and returned as part of the coupon data in the <strong>GET Coupons API</strong>. </p><p>This enables richer coupon presentation across client applications and channels. </p> </div>",
       "capabilities": [
@@ -22,8 +21,8 @@
     },
     {
       "title": "[HSA] Create Merchant API",
-      "platform": "Web",
-      "plan": "All Plans",
+      "platform": "All",
+      "plan": "Shopify & Salla: Free / Pro / GURU · Selfserve: Starter / Growth / Enterprise",
       "channel": "All",
       "description": "<div><h2><strong style=\"font-size:14px;\">As a</strong><span style=\"font-size:14px;\"> developer integrating with Gameball</span> </h2><h2><strong style=\"font-size:14px;\">I want</strong><span style=\"font-size:14px;\"> an API that allows me to create a merchant</span> </h2><p><strong>So that</strong> I can register merchants programmatically using a merchant ID and merchant name. </p><p><br> </p><div style=\"margin-top:14px;margin-bottom:14px;\"><p>Currently, there is no dedicated API endpoint to create merchants.<br>\nThis feature introduces a new API that enables clients to <strong>create a merchant</strong> by providing the required merchant information: </p><ul><li><p><strong>Merchant ID</strong> </p> </li><li><p><strong>Merchant Name</strong> </p> </li> </ul><p>This API will allow merchants to be managed programmatically and used across configurations such as coupons, redemption rules, and filtering. </p> </div> </div>",
       "capabilities": [
@@ -38,8 +37,8 @@
     },
     {
       "title": "Bulk Customer Data Update via CSV Upload",
-      "platform": "Web",
-      "plan": "All Plans",
+      "platform": "All",
+      "plan": "Shopify & Salla: Free / Pro / GURU · Selfserve: Starter / Growth / Enterprise",
       "channel": "All",
       "description": "<div><b>As a</b> Gameball client,<br><b>\nI want to</b> update my customers’ points, levels, or attributes in bulk by uploading CSV files,<br><b>\nSo that</b> I can efficiently manage large-scale customer data updates without needing to make individual edits or API calls.<br> </div>",
       "capabilities": [
@@ -64,7 +63,8 @@
       "overview": "<div><p><strong></strong> </p><strong>As a</strong> developer integrating with Gameball’s Orders API<br><strong>I want</strong> refund transactions to be included in the order transaction logs response<br><strong>So that</strong> I can retrieve the complete history of all financial actions related to an order through a single endpoint.<p> </p> </div><div><br> </div><div><p>The endpoint<br><pre><code><code>GET /api/v4.0/integrations/orders/{orderId}/transactions</code></code></pre> </p><p>currently returns transaction logs related to an order, including redemption transactions. However, refund transactions associated with the same order are not included. </p><p>This enhancement will extend the response to include <strong>refund transactions</strong>, allowing integrators to access a <strong>full, chronological view</strong> of all financial activities related to an order. </p><br> </div>",
       "whatsNew": [
         {
-          "title": "Changes",
+          "title": "What's New",
+          "description": "",
           "items": [
             "<li><span style=\"font",
             "weight:600;\">Acceptance Criteria</span> </li><h3>Functional Requirements </h3><ul><li><p>The endpoint returns <strong>all transaction types</strong> associated with the given order, including: </p><ul><li><p>Earn transactions </p> </li><li><p>Redemption transactions </p> </li><li><p><strong>Refund transactions</strong> </p> </li> </ul> </li><li><p>Refund transactions are included in the same response payload as other transaction types. </p> </li><li><p>Refund transactions are clearly identifiable via: </p><ul><li><p>A transaction type or action field (e.g., <code>refund</code>) </p> </li><li><p>Relevant metadata (e.g., refunded amount, reference transaction if applicable) </p> </li> </ul> </li> </ul><h3>Response Behavior </h3><ul><li><p>Refund transactions appear in the transaction logs using the <strong>same data structure</strong> as other transactions where applicable. </p> </li><li><p>The response maintains a <strong>consistent schema</strong> to avoid breaking existing integrations. </p> </li><li><p>Transactions are returned in a <strong>clear and predictable order</strong> (e.g., chronological by transaction date). </p> </li> </ul><h3>Backward Compatibility </h3><ul><li><p>Existing consumers of the endpoint are not impacted by the change. </p> </li><li><p>No existing response fields are removed or renamed. </p> </li><li><p>Integrations that do not rely on refund data continue to function without modification. </p> </li> </ul><h3>Data Accuracy &amp; Integrity </h3><ul><li><p>Refund transactions returned are correctly linked to the specified order ID. </p> </li><li><p>Refund amounts and timestamps match the source",
