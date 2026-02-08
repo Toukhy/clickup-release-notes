@@ -1,0 +1,49 @@
+{
+  "date": "10 of February 2026",
+  "release": "051",
+  "dateRange": "08 Feb, 26 to 10 Feb, 26",
+  "duration": "3 Days",
+  "newFeatures": [
+    {
+      "title": "JSON-to-ClickUp Integration",
+      "platform": "API",
+      "plan": "All Plans",
+      "channel": "All",
+      "description": "Automatically generate ClickUp release notes from structured JSON data.",
+      "capabilities": [
+        {
+          "title": "Automatic Formatting",
+          "items": [
+            "JSON input converted to formatted markdown",
+            "Consistent styling across all release notes",
+            "Support for features, improvements, and bug fixes"
+          ]
+        },
+        {
+          "title": "GitHub Integration",
+          "items": [
+            "Push JSON to trigger workflow",
+            "Automatic ClickUp page creation",
+            "No manual formatting required"
+          ]
+        }
+      ]
+    }
+  ],
+  "improvements": [
+    {
+      "title": "Streamlined Release Process",
+      "overview": "Simplified the release notes creation workflow for the product team.",
+      "whatsNew": [
+        {
+          "title": "Template-Based Generation",
+          "items": [
+            "Predefined structure ensures consistency",
+            "Easy to extend and customize"
+          ]
+        }
+      ]
+    }
+  ],
+  "bugFixes": []
+}
