@@ -1,0 +1,42 @@
+{
+  "date": "8 of February 2026",
+  "release": "49",
+  "dateRange": "25 Jan, 26 to 8 Feb, 26",
+  "duration": "2 Weeks",
+  "newFeatures": [
+    {
+      "title": "Bulk Customer Data Update via CSV Upload",
+      "platform": "Web",
+      "plan": "All Plans",
+      "channel": "All",
+      "description": "",
+      "capabilities": []
+    },
+    {
+      "title": "[Due Date 5 Feb] HSA: Support Coupon Images for Standalone Manual Coupons",
+      "platform": "Web",
+      "plan": "All Plans",
+      "channel": "All",
+      "description": "",
+      "capabilities": []
+    },
+    {
+      "title": "[HSA] Create Merchant API",
+      "platform": "Web",
+      "plan": "All Plans",
+      "channel": "All",
+      "description": "",
+      "capabilities": []
+    },
+    {
+      "title": "Include Refund Transactions in Order Transaction Logs API",
+      "platform": "Web",
+      "plan": "All Plans",
+      "channel": "All",
+      "description": "",
+      "capabilities": []
+    }
+  ],
+  "improvements": [],
+  "bugFixes": []
+}
