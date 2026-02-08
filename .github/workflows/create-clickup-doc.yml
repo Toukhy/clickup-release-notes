@@ -46,6 +46,7 @@ jobs:
           CLICKUP_WORKSPACE_ID: ${{ secrets.CLICKUP_WORKSPACE_ID }}
           CLICKUP_DOC_ID: ${{ secrets.CLICKUP_DOC_ID }}
           CLICKUP_PARENT_PAGE_ID: ${{ secrets.CLICKUP_PARENT_PAGE_ID }}
+          GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
         run: |
           FILES="${{ steps.changed-files.outputs.files }}${{ steps.manual-file.outputs.files }}"
 
@@ -60,19 +61,26 @@ jobs:
 
               # Check if it's a JSON file
               if [[ "$file" == *.json ]]; then
-                echo "Converting JSON to Markdown..."
-                # Generate markdown from JSON
-                node scripts/generate-release-notes.js "$file" /tmp/release-notes.md 2>/tmp/page-info.txt
+                echo "Step 1: Transforming content with AI..."
+                # Transform raw content to marketing language using Groq
+                node scripts/transform-content.js "$file" /tmp/transformed.json
+
+                echo "Step 2: Generating markdown..."
+                # Generate markdown from transformed JSON
+                node scripts/generate-release-notes.js /tmp/transformed.json /tmp/release-notes.md 2>/tmp/page-info.txt
 
                 # Extract page name
                 PAGE_NAME=$(grep "PAGE_NAME=" /tmp/page-info.txt | cut -d'=' -f2)
                 echo "Page name: $PAGE_NAME"
 
+                echo "Step 3: Creating ClickUp doc..."
                 # Create ClickUp doc with generated markdown
                 node scripts/create-clickup-doc.js /tmp/release-notes.md "$PAGE_NAME"
               else
                 # It's already markdown, process directly
                 node scripts/create-clickup-doc.js "$file"
               fi
+
+              echo "Done processing: $file"
             fi
           done
