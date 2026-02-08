@@ -3,34 +3,36 @@ const path = require('path');
 
 /**
  * Generates formatted release notes markdown from JSON data
- * Following the exact template structure from templates/release-notes-template.md
+ * Matching the exact format of Gameball release notes
  */
 function generateReleaseNotes(data) {
   const {
     date,
     release,
     dateRange,
-    duration,
     newFeatures = [],
     improvements = [],
     bugFixes = []
   } = data;
 
   let markdown = `# What's New?\n\n`;
-  markdown += `**Date:** ${date} | **Release:** ${release} | From ${dateRange} [${duration}]\n\n`;
+  markdown += `**Date:** ${date} | **Release:** ${release} | From ${dateRange}\n\n`;
   markdown += `---\n\n`;
+
+  let sectionNumber = 0;
 
   // New Features
   if (newFeatures.length > 0) {
     markdown += `## New Features\n\n`;
 
-    newFeatures.forEach((feature, index) => {
-      markdown += `### ${index + 1}. ${feature.title}\n\n`;
+    newFeatures.forEach((feature) => {
+      sectionNumber++;
+      markdown += `### ${sectionNumber}. ${feature.title}\n\n`;
 
       // Platform/Plan/Channel table
       markdown += `| | |\n|---|---|\n`;
       markdown += `| **Platform** | ${feature.platform || 'All'} |\n`;
-      markdown += `| **Plan** | ${feature.plan || 'Shopify & Salla: All Plans · Selfserve: All Plans'} |\n`;
+      markdown += `| **Plan** | ${feature.plan || 'Shopify & Salla: Free / Pro / GURU · Selfserve: Starter / Growth / Enterprise'} |\n`;
       markdown += `| **Channel** | ${feature.channel || 'All'} |\n\n`;
 
       // Description
@@ -66,12 +68,8 @@ function generateReleaseNotes(data) {
       if (feature.whatsNew && feature.whatsNew.length > 0) {
         markdown += `#### What's New\n\n`;
 
-        feature.whatsNew.forEach((item, i) => {
-          if (feature.whatsNew.length > 1) {
-            markdown += `**${i + 1}. ${item.title}**\n\n`;
-          } else {
-            markdown += `**${item.title}**\n\n`;
-          }
+        feature.whatsNew.forEach((item) => {
+          markdown += `**${item.title}**\n`;
           if (item.description) {
             markdown += `${item.description}\n`;
           }
@@ -97,15 +95,16 @@ function generateReleaseNotes(data) {
     });
   }
 
-  // Other Improvements
+  // Other Improvements (continues numbering from features)
   if (improvements.length > 0) {
     markdown += `## Other Improvements\n\n`;
 
-    improvements.forEach((improvement, index) => {
-      markdown += `### ${index + 1}. ${improvement.title}\n\n`;
+    improvements.forEach((improvement) => {
+      sectionNumber++;
+      markdown += `### ${sectionNumber}. ${improvement.title}\n\n`;
 
       if (improvement.overview) {
-        markdown += `#### Overview\n\n${improvement.overview}\n\n`;
+        markdown += `#### Overview\n${improvement.overview}\n\n`;
       }
 
       if (improvement.description) {
@@ -117,10 +116,10 @@ function generateReleaseNotes(data) {
       }
 
       if (improvement.whatsNew && improvement.whatsNew.length > 0) {
-        markdown += `#### What's New\n\n`;
+        markdown += `#### What's New\n`;
 
-        improvement.whatsNew.forEach((item, i) => {
-          markdown += `**${i + 1}. ${item.title}**\n\n`;
+        improvement.whatsNew.forEach((item) => {
+          markdown += `**${item.title}**\n`;
           if (item.description) {
             markdown += `${item.description}\n`;
           }
@@ -162,7 +161,7 @@ function generateReleaseNotes(data) {
   }
 
   markdown += `\n---\n\n`;
-  markdown += `**That's all for today, See you in the next release note!**`;
+  markdown += `✨ **That's all for today, See you in the next release note!** ✨`;
 
   return markdown;
 }
@@ -173,8 +172,35 @@ function generateReleaseNotes(data) {
 function extractPageName(data) {
   const { date, release } = data;
 
-  // Try to parse date like "05 of February 2026"
-  const dateMatch = date.match(/(\d+)\s*of\s*(\w+)\s*(\d+)/i);
+  // If release already contains the page name format (e.g., R26.049-0802)
+  if (release && release.startsWith('R')) {
+    return release;
+  }
+
+  // Try to parse date like "05 of February 2026" or "February 5, 2026"
+  let dateMatch = date.match(/(\d+)\s*of\s*(\w+)\s*(\d+)/i);
+
+  if (!dateMatch) {
+    // Try format "Month DD, YYYY"
+    dateMatch = date.match(/(\w+)\s+(\d+),?\s*(\d+)/i);
+    if (dateMatch) {
+      // Swap month and day positions
+      const monthName = dateMatch[1].toLowerCase();
+      const day = dateMatch[2].padStart(2, '0');
+      const year = dateMatch[3].substring(2);
+
+      const months = {
+        'january': '01', 'february': '02', 'march': '03', 'april': '04',
+        'may': '05', 'june': '06', 'july': '07', 'august': '08',
+        'september': '09', 'october': '10', 'november': '11', 'december': '12'
+      };
+
+      const month = months[monthName] || '01';
+      const releaseNum = release.replace(/[^0-9]/g, '').padStart(3, '0');
+
+      return `R${year}.${releaseNum}-${month}${day}`;
+    }
+  }
 
   if (dateMatch) {
     const day = dateMatch[1].padStart(2, '0');
