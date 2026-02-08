@@ -1,0 +1,43 @@
+{
+  "date": "February 10, 2026",
+  "release": "R26.052-0210",
+  "dateRange": "February 3, 2026 to February 10, 2026",
+  "newFeatures": [
+    {
+      "title": "[Due Date 10 Feb] HSA: Customer Loyalty Dashboard Redesign",
+      "platform": "Web",
+      "plan": "Shopify & Salla: Pro / GURU · Selfserve: Growth / Enterprise",
+      "channel": "All",
+      "description": "<div><strong>As a</strong> store owner using Gameball<br><strong>I want</strong> a redesigned loyalty dashboard<br><strong>So that</strong> I can easily view and manage my customers' loyalty status and rewards.<br><br>Currently, the dashboard is cluttered and hard to navigate. This enhancement will provide a <strong>cleaner, more intuitive interface</strong> with better data visualization.</div>",
+      "capabilities": [
+        {
+          "title": "Acceptance Criteria",
+          "items": [
+            "<p>Dashboard displays customer count, points distributed, and redemption rates</p>",
+            "<p>Charts are responsive and load within 2 seconds</p>",
+            "<p>Export functionality works for all data views</p>",
+            "<p>Mobile responsive design implemented</p>"
+          ]
+        }
+      ]
+    }
+  ],
+  "improvements": [
+    {
+      "title": "[HSA] Performance Optimization for Points Calculation",
+      "overview": "<div><strong>As a</strong> developer<br><strong>I want</strong> faster points calculation<br><strong>So that</strong> customers don't experience delays when earning points.</div>",
+      "whatsNew": [
+        {
+          "title": "Technical Implementation",
+          "description": "<p>Optimized database queries and added caching layer</p>",
+          "items": [
+            "<li>Reduced API response time by 40%</li>",
+            "<li>Added Redis caching for frequent calculations</li>",
+            "<li>Implemented batch processing for bulk operations</li>"
+          ]
+        }
+      ]
+    }
+  ],
+  "bugFixes": []
+}
