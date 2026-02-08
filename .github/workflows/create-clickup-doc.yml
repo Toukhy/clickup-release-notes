@@ -1,0 +1,60 @@
+name: Create ClickUp Release Notes
+
+on:
+  push:
+    paths:
+      - 'release-notes/*.md'
+  workflow_dispatch:
+    inputs:
+      file_path:
+        description: 'Path to the release notes markdown file'
+        required: true
+        type: string
+
+jobs:
+  create-clickup-doc:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 2
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Get changed files
+        id: changed-files
+        if: github.event_name == 'push'
+        run: |
+          changed_files=$(git diff --name-only HEAD~1 HEAD -- 'release-notes/*.md' | tr '\n' ' ')
+          echo "files=$changed_files" >> $GITHUB_OUTPUT
+
+      - name: Set file path for manual trigger
+        id: manual-file
+        if: github.event_name == 'workflow_dispatch'
+        run: |
+          echo "files=${{ github.event.inputs.file_path }}" >> $GITHUB_OUTPUT
+
+      - name: Create ClickUp docs
+        env:
+          CLICKUP_API_TOKEN: ${{ secrets.CLICKUP_API_TOKEN }}
+          CLICKUP_WORKSPACE_ID: ${{ secrets.CLICKUP_WORKSPACE_ID }}
+          CLICKUP_DOC_ID: ${{ secrets.CLICKUP_DOC_ID }}
+          CLICKUP_PARENT_PAGE_ID: ${{ secrets.CLICKUP_PARENT_PAGE_ID }}
+        run: |
+          FILES="${{ steps.changed-files.outputs.files }}${{ steps.manual-file.outputs.files }}"
+
+          if [ -z "$FILES" ]; then
+            echo "No release notes files found"
+            exit 0
+          fi
+
+          for file in $FILES; do
+            if [ -f "$file" ]; then
+              echo "Processing: $file"
+              node scripts/create-clickup-doc.js "$file"
+            fi
+          done
