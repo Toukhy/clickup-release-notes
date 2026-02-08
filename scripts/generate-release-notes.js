@@ -3,6 +3,7 @@ const path = require('path');
 
 /**
  * Generates formatted release notes markdown from JSON data
+ * Following the exact template structure from templates/release-notes-template.md
  */
 function generateReleaseNotes(data) {
   const {
@@ -28,8 +29,8 @@ function generateReleaseNotes(data) {
 
       // Platform/Plan/Channel table
       markdown += `| | |\n|---|---|\n`;
-      markdown += `| **Platform** | ${feature.platform || 'Web'} |\n`;
-      markdown += `| **Plan** | ${feature.plan || 'All Plans'} |\n`;
+      markdown += `| **Platform** | ${feature.platform || 'All'} |\n`;
+      markdown += `| **Plan** | ${feature.plan || 'Shopify & Salla: All Plans · Selfserve: All Plans'} |\n`;
       markdown += `| **Channel** | ${feature.channel || 'All'} |\n\n`;
 
       // Description
@@ -59,7 +60,6 @@ function generateReleaseNotes(data) {
             markdown += `\n`;
           }
         });
-        markdown += `\n`;
       }
 
       // What's New section (alternative to capabilities)
@@ -67,7 +67,11 @@ function generateReleaseNotes(data) {
         markdown += `#### What's New\n\n`;
 
         feature.whatsNew.forEach((item, i) => {
-          markdown += `**${i + 1}. ${item.title}**\n\n`;
+          if (feature.whatsNew.length > 1) {
+            markdown += `**${i + 1}. ${item.title}**\n\n`;
+          } else {
+            markdown += `**${item.title}**\n\n`;
+          }
           if (item.description) {
             markdown += `${item.description}\n`;
           }
@@ -78,6 +82,15 @@ function generateReleaseNotes(data) {
           }
           markdown += `\n`;
         });
+      }
+
+      // Example Use Cases
+      if (feature.useCases && feature.useCases.length > 0) {
+        markdown += `#### Example Use Cases\n`;
+        feature.useCases.forEach(useCase => {
+          markdown += `- ${useCase}\n`;
+        });
+        markdown += `\n`;
       }
 
       markdown += `---\n\n`;
@@ -137,11 +150,11 @@ function generateReleaseNotes(data) {
   markdown += `## Bug Fixes\n\n`;
 
   if (bugFixes.length > 0) {
-    bugFixes.forEach(bug => {
+    bugFixes.forEach((bug, index) => {
       if (typeof bug === 'string') {
-        markdown += `- ${bug}\n`;
+        markdown += `${index + 1}. ${bug}\n`;
       } else if (bug.title) {
-        markdown += `- **${bug.title}**: ${bug.description || ''}\n`;
+        markdown += `${index + 1}. **${bug.title}** - ${bug.description || ''}\n`;
       }
     });
   } else {
