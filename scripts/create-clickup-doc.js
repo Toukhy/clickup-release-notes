@@ -37,12 +37,20 @@ function extractPageName(content, filename) {
 
   if (dateMatch) {
     const day = dateMatch[1].padStart(2, '0');
-    const month = dateMatch[2].substring(0, 2);
+    const monthName = dateMatch[2].toLowerCase();
     const year = dateMatch[3].substring(2);
 
+    const months = {
+      'january': '01', 'february': '02', 'march': '03', 'april': '04',
+      'may': '05', 'june': '06', 'july': '07', 'august': '08',
+      'september': '09', 'october': '10', 'november': '11', 'december': '12'
+    };
+
+    const month = months[monthName] || '01';
+
     // Format: R26.049-0205 (Year.Release-MonthDay)
-    const releaseNum = releaseMatch ? releaseMatch[1].trim().replace(/[^0-9]/g, '') || '000' : '000';
-    return `R${year}.${releaseNum.padStart(3, '0')}-${month}${day}`;
+    const releaseNum = releaseMatch ? releaseMatch[1].trim().replace(/[^0-9]/g, '').padStart(3, '0') : '000';
+    return `R${year}.${releaseNum}-${month}${day}`;
   }
 
   // Fallback to filename
@@ -51,9 +59,10 @@ function extractPageName(content, filename) {
 
 async function main() {
   const filePath = process.argv[2];
+  const overridePageName = process.argv[3]; // Optional: override page name
 
   if (!filePath) {
-    console.error('Usage: node create-clickup-doc.js <path-to-markdown-file>');
+    console.error('Usage: node create-clickup-doc.js <path-to-markdown-file> [page-name]');
     process.exit(1);
   }
 
@@ -68,7 +77,7 @@ async function main() {
   }
 
   const content = fs.readFileSync(filePath, 'utf-8');
-  const pageName = extractPageName(content, filePath);
+  const pageName = overridePageName || extractPageName(content, filePath);
 
   console.log(`Creating ClickUp page: ${pageName}`);
 

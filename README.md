@@ -1,93 +1,126 @@
 # ClickUp Release Notes Automation
 
-Automatically create ClickUp docs from markdown release notes files.
+Automatically create ClickUp docs from release notes data.
 
 ## How It Works
 
-1. Push a markdown file to the `release-notes/` folder
-2. GitHub Actions automatically creates a new page in ClickUp under "Upcoming (Not Published)"
-3. The page is created in the Gameball Product Release Notes doc
-
-## Setup
-
-### Required GitHub Secrets
-
-Add these secrets to your repository (Settings > Secrets and variables > Actions):
-
-| Secret | Value | Description |
-|--------|-------|-------------|
-| `CLICKUP_API_TOKEN` | `pk_5495653_...` | Your ClickUp API token |
-| `CLICKUP_WORKSPACE_ID` | `3477524` | Gameball workspace ID |
-| `CLICKUP_DOC_ID` | `3a40m-33560` | Gameball Product Release Notes doc ID |
-| `CLICKUP_PARENT_PAGE_ID` | `3a40m-31220` | "Upcoming (Not Published)" page ID |
+1. Push a JSON file to the `release-data/` folder with your release notes data
+2. GitHub Actions automatically formats it into markdown and creates a page in ClickUp
+3. The page is created under "Gameball Product Release Notes > Upcoming (Not Published)"
 
 ## Usage
 
-### For Lovable
+### Push JSON Data (Recommended)
 
-Push a markdown file to the `release-notes/` folder:
+Push a JSON file to `release-data/` folder:
 
+```json
+{
+  "date": "15 of March 2026",
+  "release": "051",
+  "dateRange": "10 Mar, 26 to 15 Mar, 26",
+  "duration": "1 Week",
+  "newFeatures": [
+    {
+      "title": "Feature Name",
+      "platform": "Web",
+      "plan": "Shopify & Salla: Pro / GURU · Selfserve: Growth / Enterprise",
+      "channel": "All",
+      "description": "Brief description of the feature.",
+      "capabilities": [
+        {
+          "title": "Dashboard Control",
+          "items": [
+            "New toggle in Settings",
+            "Default set to Inactive"
+          ]
+        },
+        {
+          "title": "Configuration Options",
+          "items": [
+            "Define start date",
+            "Control visibility"
+          ]
+        }
+      ]
+    }
+  ],
+  "improvements": [
+    {
+      "title": "Improvement Name",
+      "overview": "Description of the improvement.",
+      "endpoint": "GET /api/v4.0/example",
+      "whatsNew": [
+        {
+          "title": "Enhanced Response",
+          "items": [
+            "New field added",
+            "Better performance"
+          ]
+        }
+      ]
+    }
+  ],
+  "bugFixes": [
+    "Fixed issue with X",
+    "Resolved problem in Y"
+  ]
+}
 ```
-release-notes/
-  └── release-notes-feb-2026.md
+
+### JSON Schema
+
+| Field | Type | Required | Description |
+|-------|------|----------|-------------|
+| `date` | string | Yes | Format: "DD of Month YYYY" |
+| `release` | string | Yes | Release number (e.g., "051") |
+| `dateRange` | string | Yes | Date range (e.g., "10 Mar, 26 to 15 Mar, 26") |
+| `duration` | string | Yes | Duration (e.g., "1 Week") |
+| `newFeatures` | array | No | List of new features |
+| `improvements` | array | No | List of improvements |
+| `bugFixes` | array | No | List of bug fixes (strings or objects) |
+
+### Feature Object
+
+```json
+{
+  "title": "Feature Name",
+  "platform": "Web / API / Mobile",
+  "plan": "Plan details",
+  "channel": "All",
+  "description": "Feature description",
+  "overview": "Optional overview section",
+  "capabilities": [
+    {
+      "title": "Capability Group",
+      "items": ["Item 1", "Item 2"]
+    }
+  ],
+  "whatsNew": [
+    {
+      "title": "What's New Item",
+      "description": "Optional description",
+      "items": ["Detail 1", "Detail 2"]
+    }
+  ]
+}
 ```
 
-The file should follow this format:
+### Alternative: Push Markdown Directly
 
-```markdown
-# What's New?
-
-**Date:** 05 of February 2026 | **Release:** Q3-W1 | From 01 Feb, 26 to 05 Feb, 26 [1 Week]
-
----
-
-## New Features
-
-### 1. Feature Name
-
-| | |
-|---|---|
-| **Platform** | Web |
-| **Plan** | Shopify & Salla: Pro / GURU |
-| **Channel** | All |
-
-Feature description...
-
----
-
-## Other Improvements
-
-### 1. Improvement Name
-
-Description...
-
----
-
-## Bug Fixes
-
-N/A
-
----
-
-**That's all for today, See you in the next release note!**
-```
-
-### Manual Trigger
-
-You can also manually trigger the workflow:
-1. Go to Actions > Create ClickUp Release Notes
-2. Click "Run workflow"
-3. Enter the file path (e.g., `release-notes/my-release.md`)
+You can also push pre-formatted markdown to `release-notes/` folder.
 
 ## File Naming
 
-The page name in ClickUp is automatically generated from the content:
-- Format: `R{YY}.{Release}-{MMDD}`
-- Example: `R26.049-0205` (Release 049 on Feb 05, 2026)
+- JSON files: `release-data/release-YYYY-MM-DD.json`
+- Markdown files: `release-notes/release-notes-month-year.md`
 
-## Local Testing
+The page name in ClickUp is automatically generated: `R{YY}.{Release}-{MMDD}`
 
-```bash
-export CLICKUP_API_TOKEN="your-token"
-node scripts/create-clickup-doc.js release-notes/my-release.md
-```
+## Setup (Already Configured)
+
+GitHub Secrets:
+- `CLICKUP_API_TOKEN`
+- `CLICKUP_WORKSPACE_ID`
+- `CLICKUP_DOC_ID`
+- `CLICKUP_PARENT_PAGE_ID`

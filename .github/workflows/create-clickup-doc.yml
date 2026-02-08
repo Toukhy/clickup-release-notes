@@ -4,10 +4,11 @@ on:
   push:
     paths:
       - 'release-notes/*.md'
+      - 'release-data/*.json'
   workflow_dispatch:
     inputs:
       file_path:
-        description: 'Path to the release notes markdown file'
+        description: 'Path to the release notes file (JSON or MD)'
         required: true
         type: string
 
@@ -29,7 +30,8 @@ jobs:
         id: changed-files
         if: github.event_name == 'push'
         run: |
-          changed_files=$(git diff --name-only HEAD~1 HEAD -- 'release-notes/*.md' | tr '\n' ' ')
+          # Get both JSON and MD files
+          changed_files=$(git diff --name-only HEAD~1 HEAD -- 'release-notes/*.md' 'release-data/*.json' | tr '\n' ' ')
           echo "files=$changed_files" >> $GITHUB_OUTPUT
 
       - name: Set file path for manual trigger
@@ -38,7 +40,7 @@ jobs:
         run: |
           echo "files=${{ github.event.inputs.file_path }}" >> $GITHUB_OUTPUT
 
-      - name: Create ClickUp docs
+      - name: Process and create ClickUp docs
         env:
           CLICKUP_API_TOKEN: ${{ secrets.CLICKUP_API_TOKEN }}
           CLICKUP_WORKSPACE_ID: ${{ secrets.CLICKUP_WORKSPACE_ID }}
@@ -55,6 +57,22 @@ jobs:
           for file in $FILES; do
             if [ -f "$file" ]; then
               echo "Processing: $file"
-              node scripts/create-clickup-doc.js "$file"
+
+              # Check if it's a JSON file
+              if [[ "$file" == *.json ]]; then
+                echo "Converting JSON to Markdown..."
+                # Generate markdown from JSON
+                node scripts/generate-release-notes.js "$file" /tmp/release-notes.md 2>/tmp/page-info.txt
+
+                # Extract page name
+                PAGE_NAME=$(grep "PAGE_NAME=" /tmp/page-info.txt | cut -d'=' -f2)
+                echo "Page name: $PAGE_NAME"
+
+                # Create ClickUp doc with generated markdown
+                node scripts/create-clickup-doc.js /tmp/release-notes.md "$PAGE_NAME"
+              else
+                # It's already markdown, process directly
+                node scripts/create-clickup-doc.js "$file"
+              fi
             fi
           done
