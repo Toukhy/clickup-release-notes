@@ -2,10 +2,93 @@ const fs = require('fs');
 const path = require('path');
 
 /**
+ * Strip HTML tags and convert to clean markdown
+ */
+function cleanHtml(html) {
+  if (!html || typeof html !== 'string') return html;
+
+  let text = html
+    // Convert HTML line breaks to newlines
+    .replace(/<br\s*\/?>/gi, '\n')
+    // Convert paragraph tags
+    .replace(/<\/p>/gi, '\n\n')
+    .replace(/<p[^>]*>/gi, '')
+    // Convert headers
+    .replace(/<h[1-6][^>]*>/gi, '\n### ')
+    .replace(/<\/h[1-6]>/gi, '\n')
+    // Convert list items
+    .replace(/<li[^>]*>/gi, '- ')
+    .replace(/<\/li>/gi, '\n')
+    // Remove list wrappers
+    .replace(/<\/?ul[^>]*>/gi, '\n')
+    .replace(/<\/?ol[^>]*>/gi, '\n')
+    // Convert bold
+    .replace(/<strong[^>]*>/gi, '**')
+    .replace(/<\/strong>/gi, '**')
+    .replace(/<b[^>]*>/gi, '**')
+    .replace(/<\/b>/gi, '**')
+    // Convert italic
+    .replace(/<em[^>]*>/gi, '*')
+    .replace(/<\/em>/gi, '*')
+    .replace(/<i[^>]*>/gi, '*')
+    .replace(/<\/i>/gi, '*')
+    // Convert code
+    .replace(/<code[^>]*>/gi, '`')
+    .replace(/<\/code>/gi, '`')
+    .replace(/<pre[^>]*>/gi, '```\n')
+    .replace(/<\/pre>/gi, '\n```')
+    // Remove div tags
+    .replace(/<\/?div[^>]*>/gi, '\n')
+    // Remove span tags
+    .replace(/<\/?span[^>]*>/gi, '')
+    // Remove remaining HTML tags
+    .replace(/<[^>]+>/g, '')
+    // Decode HTML entities
+    .replace(/&nbsp;/g, ' ')
+    .replace(/&amp;/g, '&')
+    .replace(/&lt;/g, '<')
+    .replace(/&gt;/g, '>')
+    .replace(/&quot;/g, '"')
+    .replace(/&#39;/g, "'")
+    // Clean up multiple newlines
+    .replace(/\n{3,}/g, '\n\n')
+    // Clean up spaces
+    .replace(/[ \t]+/g, ' ')
+    // Trim lines
+    .split('\n').map(line => line.trim()).join('\n')
+    .trim();
+
+  return text;
+}
+
+/**
+ * Clean all string fields in an object recursively
+ */
+function cleanObject(obj) {
+  if (typeof obj === 'string') {
+    return cleanHtml(obj);
+  }
+  if (Array.isArray(obj)) {
+    return obj.map(item => cleanObject(item));
+  }
+  if (typeof obj === 'object' && obj !== null) {
+    const cleaned = {};
+    for (const key in obj) {
+      cleaned[key] = cleanObject(obj[key]);
+    }
+    return cleaned;
+  }
+  return obj;
+}
+
+/**
  * Generates formatted release notes markdown from JSON data
  * Matching the exact format of Gameball release notes
  */
 function generateReleaseNotes(data) {
+  // Clean all HTML from the data first
+  const cleanData = cleanObject(data);
+
   const {
     date,
     release,
@@ -13,7 +96,7 @@ function generateReleaseNotes(data) {
     newFeatures = [],
     improvements = [],
     bugFixes = []
-  } = data;
+  } = cleanData;
 
   let markdown = `# What's New?\n\n`;
   markdown += `**Date:** ${date} | **Release:** ${release} | From ${dateRange}\n\n`;
@@ -27,7 +110,12 @@ function generateReleaseNotes(data) {
 
     newFeatures.forEach((feature) => {
       sectionNumber++;
-      markdown += `### ${sectionNumber}. ${feature.title}\n\n`;
+
+      // Clean title - remove prefixes like "[Due Date 5 Feb] HSA:" etc.
+      let title = feature.title || '';
+      title = title.replace(/^\[.*?\]\s*/g, '').replace(/^HSA:\s*/gi, '').trim();
+
+      markdown += `### ${sectionNumber}. ${title}\n\n`;
 
       // Platform/Plan/Channel table
       markdown += `| | |\n|---|---|\n`;
@@ -101,10 +189,15 @@ function generateReleaseNotes(data) {
 
     improvements.forEach((improvement) => {
       sectionNumber++;
-      markdown += `### ${sectionNumber}. ${improvement.title}\n\n`;
+
+      // Clean title
+      let title = improvement.title || '';
+      title = title.replace(/^\[.*?\]\s*/g, '').replace(/^HSA:\s*/gi, '').trim();
+
+      markdown += `### ${sectionNumber}. ${title}\n\n`;
 
       if (improvement.overview) {
-        markdown += `#### Overview\n${improvement.overview}\n\n`;
+        markdown += `#### Overview\n\n${improvement.overview}\n\n`;
       }
 
       if (improvement.description) {
@@ -112,11 +205,11 @@ function generateReleaseNotes(data) {
       }
 
       if (improvement.endpoint) {
-        markdown += `**Endpoint:** ${improvement.endpoint}\n\n`;
+        markdown += `**Endpoint:** \`${improvement.endpoint}\`\n\n`;
       }
 
       if (improvement.whatsNew && improvement.whatsNew.length > 0) {
-        markdown += `#### What's New\n`;
+        markdown += `#### What's New\n\n`;
 
         improvement.whatsNew.forEach((item) => {
           markdown += `**${item.title}**\n`;
