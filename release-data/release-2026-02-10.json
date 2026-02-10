@@ -1,0 +1,55 @@
+{
+  "date": "February 7, 2026",
+  "release": "R26.050-0207",
+  "dateRange": "January 31, 2026 to February 7, 2026",
+  "newFeatures": [
+    {
+      "title": "Bulk Customer Data Update via CSV Upload",
+      "platform": "All",
+      "plan": "Shopify & Salla: Free / Pro / GURU · Selfserve: Starter / Growth / Enterprise",
+      "channel": "All",
+      "description": "<div><b>As a</b> Gameball client,<br><b>\nI want to</b> update my customers’ points, levels, or attributes in bulk by uploading CSV files,<br><b>\nSo that</b> I can efficiently manage large-scale customer data updates without needing to make individual edits or API calls.<br> </div>",
+      "capabilities": [
+        {
+          "title": "Key Capabilities",
+          "items": [
+            "<h3><strong>Acceptance Criteria</strong> </h3><h4><strong>CSV Upload Options</strong> </h4><ul><li><p>Clients should be able to upload CSV files for updating customer data through the Gameball dashboard. </p> </li><li><p>Each data type should have a dedicated upload option: </p><ul><li><p><strong>Points Update</strong> </p> </li><li><p><strong>Tiers Update</strong> </p> </li><li><p><strong>Attributes Update</strong> </p> </li> </ul> </li><li><p>The system should support multiple CSV uploads within the same interface (e.g., separate files for each data type). </p> </li> </ul><h4><strong>File Validation</strong> </h4><ul><li><p>The system should validate uploaded CSVs based on: </p><ul><li><p><strong>File type:</strong> Only <code>.csv</code>&nbsp;is&nbsp;accepted. </p> </li><li><p><strong>File size:</strong> Maximum of <strong>10 MB</strong> per file for web uploads. </p> </li><li><p><strong>Row limit:</strong> Maximum of <strong>100,000 rows</strong> per upload. </p> </li> </ul> </li><li><p>If the file exceeds the size or row limit, an error message should be displayed: </p><blockquote><p>“File exceeds the maximum allowed size of 10 MB or 100,000 rows. Please split your data.” </p></blockquote> </li> </ul><h4><strong>Processing Behavior</strong> </h4><ul><li><p>Once validated, uploads should be processed asynchronously as background jobs. </p> </li><li><p>Clients should receive: </p><ul><li><p>A <strong>progress indicator</strong> during processing. </p> </li><li><p>A <strong>success or failure notification</strong> upon completion. </p> </li> </ul> </li><li><p>If any rows fail validation, clients should be able to <strong>download an error report CSV</strong> containing: </p><ul><li><p>Customer identifier </p> </li><li><p>Error message / field validation issue </p> </li> </ul> </li> </ul><h4><strong>Data Handling</strong> </h4><ul><li><p>Updates from the CSV should follow existing business logic for updating points, levels, or attributes. </p> </li><li><p>Each successful row should be reflected in the customer profile after processing. </p> </li><li><p>Partial successes (some valid, some invalid rows) should not block the entire file. </p> </li> </ul><h4><strong>Error Management</strong> </h4><ul><li><p>Invalid rows should be skipped and reported without stopping the full file upload. </p> </li> </ul><div><b>Figma File:</b>&nbsp;<a href=\"https://www.figma.com/design/CrxQtJ3fruizPizYLwvlPL/Customers?node-id=9039-5905&amp;t=YeVfiVZTNGvsiNZp-1\">https://www.figma.com/design/CrxQtJ3fruizPizYLwvlPL/Customers?node-id=9039-5905&amp;t=YeVfiVZTNGvsiNZp-1</a> </div>"
+          ]
+        }
+      ]
+    },
+    {
+      "title": "Include Refund Transactions in Order Transaction Logs API",
+      "platform": "All",
+      "plan": "Shopify & Salla: Free / Pro / GURU · Selfserve: Starter / Growth / Enterprise",
+      "channel": "All",
+      "description": "<div><p><strong></strong> </p><strong>As a</strong> developer integrating with Gameball’s Orders API<br><strong>I want</strong> refund transactions to be included in the order transaction logs response<br><strong>So that</strong> I can retrieve the complete history of all financial actions related to an order through a single endpoint.<p> </p> </div><div><br> </div><div><p>The endpoint<br><pre><code><code>GET /api/v4.0/integrations/orders/{orderId}/transactions</code></code></pre> </p><p>currently returns transaction logs related to an order, including redemption transactions. However, refund transactions associated with the same order are not included. </p><p>This enhancement will extend the response to include <strong>refund transactions</strong>, allowing integrators to access a <strong>full, chronological view</strong> of all financial activities related to an order. </p><br> </div>",
+      "capabilities": [
+        {
+          "title": "Key Capabilities",
+          "items": [
+            "<li><span style=\"font-weight:600;\">Acceptance Criteria</span> </li><h3>Functional Requirements </h3><ul><li><p>The endpoint returns <strong>all transaction types</strong> associated with the given order, including: </p><ul><li><p>Earn transactions </p> </li><li><p>Redemption transactions </p> </li><li><p><strong>Refund transactions</strong> </p> </li> </ul> </li><li><p>Refund transactions are included in the same response payload as other transaction types. </p> </li><li><p>Refund transactions are clearly identifiable via: </p><ul><li><p>A transaction type or action field (e.g., <code>refund</code>) </p> </li><li><p>Relevant metadata (e.g., refunded amount, reference transaction if applicable) </p> </li> </ul> </li> </ul><h3>Response Behavior </h3><ul><li><p>Refund transactions appear in the transaction logs using the <strong>same data structure</strong> as other transactions where applicable. </p> </li><li><p>The response maintains a <strong>consistent schema</strong> to avoid breaking existing integrations. </p> </li><li><p>Transactions are returned in a <strong>clear and predictable order</strong> (e.g., chronological by transaction date). </p> </li> </ul><h3>Backward Compatibility </h3><ul><li><p>Existing consumers of the endpoint are not impacted by the change. </p> </li><li><p>No existing response fields are removed or renamed. </p> </li><li><p>Integrations that do not rely on refund data continue to function without modification. </p> </li> </ul><h3>Data Accuracy &amp; Integrity </h3><ul><li><p>Refund transactions returned are correctly linked to the specified order ID. </p> </li><li><p>Refund amounts and timestamps match the source-of-truth financial records. </p> </li><li><p>Partial refunds (if supported) are returned as distinct transactions. </p> </li> </ul><h3>Documentation &amp; Validation </h3><ul><li><p>API documentation is updated to reflect the inclusion of refund transactions. </p> </li><li><p>Example responses include refund transaction scenarios. </p> </li><li><p>The endpoint returns appropriate error responses for invalid or non-existent order IDs. </p> </li> </ul><br> "
+          ]
+        }
+      ]
+    }
+  ],
+  "improvements": [
+    {
+      "title": "[Due Date 5 Feb] HSA: Support Coupon Images for Standalone Manual Coupons",
+      "overview": "<div><strong>As a</strong> client creating manual standalone coupons<br><strong>I want</strong> to upload an image when creating a coupon<br><strong>So that</strong> the coupon can be visually represented and retrieved with its image through the Coupons API.<br> </div><div><br> </div><div><p>Currently, standalone manual coupons do not support images. This enhancement will allow clients to <strong>attach an image when creating a manual coupon</strong>.<br>\nThe uploaded image will be <strong>stored and associated with the coupon</strong> and returned as part of the coupon data in the <strong>GET Coupons API</strong>. </p><p>This enables richer coupon presentation across client applications and channels. </p> </div>",
+      "whatsNew": [
+        {
+          "title": "What's New",
+          "description": "",
+          "items": [
+            "<h2>Acceptance Criteria </h2><h3>Coupon Creation </h3><ul><li><p>Clients can upload an <strong>image</strong> when creating a new <strong>manual standalone coupon</strong>. </p> </li><li><p>The image is optional and does not block coupon creation if not provided. </p> </li><li><p>Supported image formats and size limits are validated during upload. </p> </li><li><p>The image is successfully stored and linked to the created coupon. </p> </li> </ul><h3>Coupons API Retrieval </h3><ul><li><p>The <strong>GET Coupons API</strong> returns the coupon image as part of the coupon payload. </p> </li><li><p>The response includes: </p><ul><li><p>A publicly accessible image URL </p> </li><li><p>Coupons without an image continue to return successfully without image data. </p> </li> </ul> </li> </ul><h3>Data Model &amp; Consistency </h3><ul><li><p>The coupon entity is extended to support an image field without impacting existing coupons. </p> </li><li><p>Existing coupons remain unaffected and do not require migration. </p> </li><li><p>Image data is returned consistently across all coupon-related endpoints where applicable. </p> </li> </ul><h3>Backward Compatibility </h3><ul><li><p>No breaking changes are introduced to the existing GET Coupons API response. </p> </li><li><p>Clients consuming the API without expecting image data continue to function normally. </p> </li> </ul><h3>Validation &amp; Error Handling </h3><ul><li><p>Invalid image formats or sizes return a clear validation error. </p> </li><li><p>Upload failures do not create partially saved coupons. </p> </li><li><p>Appropriate error messages are returned for unauthorized or invalid requests. </p> </li> </ul><h3>Documentation </h3><ul><li><p>API documentation is updated to: </p><ul><li><p>Describe the new image field </p> </li><li><p>Specify supported image formats and size limits </p> </li><li><p>Include example requests and responses </p> </li> </ul> </li><li><p>Manual coupon creation guidelines reflect image support. </p> </li> </ul><br><br>"
+          ]
+        }
+      ]
+    }
+  ],
+  "bugFixes": [
+    "[HSA] Create Merchant API"
+  ]
+}
