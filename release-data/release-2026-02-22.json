@@ -1,0 +1,31 @@
+{
+  "date": "February 21, 2026",
+  "release": "R26.051-0221",
+  "dateRange": "February 14, 2026 to February 21, 2026",
+  "newFeatures": [
+    {
+      "title": "Implement Budgeting for mission campaign",
+      "platform": "All",
+      "plan": "Shopify & Salla: Free / Pro / GURU · Selfserve: Starter / Growth / Enterprise",
+      "channel": "All",
+      "description": "<div>Enabling budget from dashboard for nonsequential mission campaign and allow for addding reward cost for each reward </div>",
+      "capabilities": []
+    }
+  ],
+  "improvements": [
+    {
+      "title": "Track Customer Inclusion/Exclusion Actions in Team Activities Audit Trail",
+      "overview": "<div><strong>As a</strong>&nbsp;dashboard user<br><strong>I want</strong> customer inclusion and exclusion actions to appear in the team activities audit trail<br><strong>So that</strong> I can see who included or excluded customers from the program and maintain accountability.<br> </div><div><br> </div><div><p>Currently, when a dashboard member includes or excludes customers from a program, this action is not recorded in the <strong>team activities audit trail</strong>. </p><p>This enhancement will ensure that <strong>all customer inclusion and exclusion actions</strong> performed by dashboard members are: </p><ul><li><p>Logged in the audit trail </p> </li><li><p>Attributed to the user who performed the action </p> </li><li><p>Visible to authorized team members for transparency and governance </p> </li> </ul> </div>",
+      "whatsNew": [
+        {
+          "title": "What's New",
+          "description": "",
+          "items": [
+            "<div><h2>Acceptance Criteria </h2><h3>Audit Trail Coverage </h3><ul><li><p>Customer <strong>inclusion</strong> actions are logged in the team activities audit trail. </p> </li><li><p>Customer <strong>exclusion</strong> actions are logged in the team activities audit trail. </p> </li><li><p>Each audit entry clearly identifies the action type (include or exclude). </p> </li> </ul><h3>Attribution </h3><ul><li><p>Each audit trail entry includes: </p><ul><li><p>The dashboard user who performed the action </p> </li><li><p>The date and time of the action </p> </li><li><p>The affected customer(s) identifier(s) </p> </li><li><p>The program or context where the action occurred </p> </li> </ul> </li> </ul><h3>Visibility &amp; Access </h3><ul><li><p>Audit entries are visible to authorized dashboard members according to existing permissions. </p> </li><li><p>Audit entries are displayed consistently with other team activity records. </p> </li> </ul><br> </div>"
+          ]
+        }
+      ]
+    }
+  ],
+  "bugFixes": []
+}
